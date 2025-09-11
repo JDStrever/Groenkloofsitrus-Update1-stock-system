@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Dropdowns</title>
+</head>
+<body>
+  <h1>Manage Dropdown Options</h1>
+  <form method="post">
+    <label>Field:
+      <select name="field">
+        <option value="run_number">Run Number</option>
+        <option value="puc">PUC</option>
+        <option value="farm_name">Farm Name</option>
+        <option value="commodity">Commodity</option>
+        <option value="variety">Variety</option>
+        <option value="bin_class">Class</option>
+        <option value="size">Size</option>
+      </select>
+    </label>
+    <input type="text" name="value" placeholder="New value" required>
+    <button type="submit">Add Option</button>
+  </form>
+
+  {% for field, opts in options.items() %}
+    <h2>{{ field.replace('_', ' ').title() }}</h2>
+    <ul>
+      {% for opt in opts %}
+        <li>{{ opt.value }}
+          <form method="post" action="{{ url_for('delete_option', option_id=opt.id) }}" style="display:inline;">
+            <button type="submit">❌</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</body>
+</html>
 
