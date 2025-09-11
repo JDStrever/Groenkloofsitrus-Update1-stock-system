@@ -1,1 +1,64 @@
 
+### ✅ `templates/edit_bin.html`
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Bin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container py-4">
+    <h2 class="mb-4">✏️ Edit Bin Entry</h2>
+    <form method="POST">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label for="run_number" class="form-label">Run Number</label>
+                <input type="text" class="form-control" id="run_number" name="run_number" value="{{ bin.run_number }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="puc" class="form-label">PUC</label>
+                <input type="text" class="form-control" id="puc" name="puc" value="{{ bin.puc }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="farm_name" class="form-label">Farm Name</label>
+                <input type="text" class="form-control" id="farm_name" name="farm_name" value="{{ bin.farm_name }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="commodity" class="form-label">Commodity</label>
+                <input type="text" class="form-control" id="commodity" name="commodity" value="{{ bin.commodity }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="variety" class="form-label">Variety</label>
+                <input type="text" class="form-control" id="variety" name="variety" value="{{ bin.variety }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="bin_class" class="form-label">Class</label>
+                <input type="text" class="form-control" id="bin_class" name="bin_class" value="{{ bin.bin_class }}" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="size" class="form-label">Size</label>
+                <input type="text" class="form-control" id="size" name="size" value="{{ bin.size }}">
+            </div>
+            <div class="col-md-4">
+                <label for="total_weight" class="form-label">Total Weight (kg)</label>
+                <input type="number" step="0.01" class="form-control" id="total_weight" name="total_weight" value="{{ bin.total_weight }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ bin.date }}" required>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">💾 Save Changes</button>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">↩️ Cancel</a>
+        </div>
+    </form>
+</body>
+</html>
+```
+
+Let me know if you'd also like the updated **admin.html** (to show run number), or if you want this form to pull dropdowns for fields instead of text input.
+
