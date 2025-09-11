@@ -1,1 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Print Labels</title>
+    <style>
+        @media print {
+            .label {
+                page-break-after: always;
+            }
+        }
+        .label {
+            width: 80mm;
+            height: 65mm;
+            padding: 10mm;
+            border: 1px solid #000;
+            margin: 5mm auto;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    {% for bin in bins %}
+    <div class="label">
+        <strong>Run: {{ bin.run_number }}</strong><br>
+        <strong>ID: {{ bin.id }}</strong><br>
+        Farm: {{ bin.farm_name }}<br>
+        PUC: {{ bin.puc }}<br>
+        Variety: {{ bin.variety }}<br>
+        Class: {{ bin.bin_class }}<br>
+        <img src="{{ url_for('barcode_image', bin_id=bin.id) }}" alt="Barcode for {{ bin.id }}">
+    </div>
+    {% endfor %}
+</body>
+</html>
 
