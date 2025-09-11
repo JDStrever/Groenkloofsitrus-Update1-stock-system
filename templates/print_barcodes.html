@@ -1,1 +1,8 @@
+<h1>Generated Bin Barcodes</h1>
 
+{% for barcode in barcodes %}
+    <p>ID: {{ barcode.id }}</p>
+    <img src="data:image/png;base64,{{ barcode.barcode }}" alt="Barcode"><br><br>
+{% endfor %}
+
+<a href="/">Back to Dashboard</a>
