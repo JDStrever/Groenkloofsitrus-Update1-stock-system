@@ -1,1 +1,7 @@
-
+Flask
+SQLAlchemy
+Flask-SQLAlchemy
+gunicorn
+python-barcode
+Pillow
+flask-httpauth
