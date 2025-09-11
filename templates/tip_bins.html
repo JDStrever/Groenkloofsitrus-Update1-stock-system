@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mark Bins as Tipped</title>
+</head>
+<body>
+    <h1>Mark Bin as Tipped</h1>
 
+    <form action="/tip_bins" method="post">
+        <label for="bin_id">Scan or Enter Bin ID:</label>
+        <input type="text" id="bin_id" name="bin_id" autofocus required>
+        <button type="submit">Mark as Tipped</button>
+    </form>
+
+    <h2>Bins on Stock:</h2>
+    <ul>
+        {% for bin in bins %}
+            <li>{{ bin.bin_id }} - {{ bin.puc }}, {{ bin.commodity }}, {{ bin.variety }}, {{ bin.weight }} kg</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <a href="/">Back to Dashboard</a>
+</body>
+</html>
