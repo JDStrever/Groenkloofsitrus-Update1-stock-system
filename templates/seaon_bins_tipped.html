@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Season Bins Tipped</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th select {
+      width: 100%;
+    }
+  </style>
+  <script>
+    function filterTable(colIndex, value) {
+      let rows = document.querySelectorAll("#seasonTable tbody tr");
+      rows.forEach(row => {
+        row.style.display = value === "" || row.cells[colIndex].innerText === value ? "" : "none";
+      });
+    }
+
+    function populateFilters() {
+      const table = document.getElementById("seasonTable");
+      const headers = table.rows[0].cells.length;
+      for (let i = 0; i < headers; i++) {
+        let select = document.createElement("select");
+        select.innerHTML = "<option value=''>All</option>";
+        let values = new Set();
+        document.querySelectorAll(`#seasonTable tbody tr td:nth-child(${i + 1})`).forEach(td => {
+          values.add(td.innerText);
+        });
+        values = Array.from(values).sort();
+        values.forEach(v => {
+          select.innerHTML += `<option value="${v}">${v}</option>`;
+        });
+        select.onchange = () => filterTable(i, select.value);
+        table.rows[0].cells[i].appendChild(select);
+      }
+    }
+
+    window.onload = populateFilters;
+  </script>
+</head>
+<body>
+  <h1>Season Bins Tipped</h1>
+  <table id="seasonTable">
+    <thead>
+      <tr>
+        <th>Run Number</th>
+        <th>PUC</th>
+        <th>Commodity</th>
+        <th>Variety</th>
+        <th>Class</th>
+        <th>Farm</th>
+        <th>Bins Tipped</th>
+        <th>Tipped Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary %}
+      <tr>
+        <td>{{ row.run_number }}</td>
+        <td>{{ row.puc }}</td>
+        <td>{{ row.commodity }}</td>
+        <td>{{ row.variety }}</td>
+        <td>{{ row.bin_class }}</td>
+        <td>{{ row.farm_name }}</td>
+        <td>{{ row.total_bins }}</td>
+        <td>{{ row.total_weight }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
 
