@@ -113,7 +113,7 @@
     
     <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    <script src="https://cdn.datatables.net/1.9.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
 
     <script>
@@ -131,7 +131,7 @@
                     };
 
                     // Columns to sum
-                    [5, 6, 7, 8, 9].forEach(function(colIdx) {
+                    [7].forEach(function(colIdx) {
                         let total = api
                             .column(colIdx, { search: 'applied' })
                             .data()
