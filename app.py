@@ -29,6 +29,7 @@ def login_required(f):
 class Bin(db.Model):
     # NOTE: SQLite doesn't enforce VARCHAR length; leaving larger to fit multi-letter prefixes + 5 digits
     id = db.Column(db.String(12), primary_key=True)
+    run_number = db.Column(db.String(100))
     puc = db.Column(db.String(100))
     farm_name = db.Column(db.String(100))
     commodity = db.Column(db.String(100))
@@ -68,7 +69,7 @@ def dashboard():
     bins = Bin.query.all()
     grouped = {}
     for b in bins:
-        key = (b.puc, b.commodity, b.variety, b.bin_class, b.farm_name)
+        key = (b.run_number, b.puc, b.commodity, b.variety, b.bin_class, b.farm_name)
         grouped.setdefault(key, []).append(b)
 
     summaries = []
@@ -77,6 +78,7 @@ def dashboard():
         tipped = [x for x in group if x.is_tipped]
         bin_ages = [(datetime.utcnow().date() - x.date).days for x in on_stock if x.date] or [0]
         summaries.append({
+            'run_number': run_number,
             'puc': puc,
             'farm_name': farm_name,
             'commodity': commodity,
@@ -96,6 +98,7 @@ def dashboard():
 def add_bins():
     if request.method == 'POST':
         num_bins = int(request.form['num_bins'])
+        run = request.form['run_number']
         puc = request.form['puc']
         farm_name = request.form['farm_name']
         commodity = request.form['commodity']
@@ -123,6 +126,7 @@ def add_bins():
 
             new_bin = Bin(
                 id=bin_id,
+                run_number=run_number,
                 puc=puc,
                 farm_name=farm_name,
                 commodity=commodity,
@@ -140,7 +144,7 @@ def add_bins():
 
     dropdowns = {
         field: [opt.value for opt in DropdownOption.query.filter_by(field=field).all()]
-        for field in ['puc', 'farm_name', 'commodity', 'variety', 'bin_class', 'size']  # include size
+        for field in ['run_number', 'puc', 'farm_name', 'commodity', 'variety', 'bin_class', 'size']  # include size
     }
     return render_template('add_bins.html', dropdowns=dropdowns)
 
@@ -175,12 +179,13 @@ def season_bins_tipped():
     tipped_bins = Bin.query.filter(Bin.is_tipped == True, Bin.date_created < threshold).all()
     grouped = {}
     for b in tipped_bins:
-        key = (b.puc, b.farm_name, b.commodity, b.variety, b.bin_class)
+        key = (b.run_number, b.puc, b.farm_name, b.commodity, b.variety, b.bin_class)
         grouped.setdefault(key, []).append(b)
 
     summary = []
-    for (puc, farm, com, var, cls), group in grouped.items():
+    for (run_number, puc, farm, com, var, cls), group in grouped.items():
         summary.append({
+            'run_number': run,
             'puc': puc,
             'farm_name': farm,
             'commodity': com,
@@ -196,10 +201,10 @@ def season_bins_tipped():
 def _csv_response(rows, filename):
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['ID', 'PUC', 'Farm Name', 'Commodity', 'Variety', 'Class', 'Size', 'Total Weight', 'Tipped', 'Tipped Weight', 'Date'])
+    writer.writerow(['ID','Run_number', 'PUC', 'Farm Name', 'Commodity', 'Variety', 'Class', 'Size', 'Total Weight', 'Tipped', 'Tipped Weight', 'Date'])
     for b in rows:
         writer.writerow([
-            b.id, b.puc, b.farm_name, b.commodity, b.variety, b.bin_class,
+            b.id, b.run_number, b.puc, b.farm_name, b.commodity, b.variety, b.bin_class,
             (b.size or ''), b.total_weight, b.is_tipped, b.tipped_weight, b.date
         ])
     output.seek(0)
@@ -241,6 +246,7 @@ def admin_panel():
 def edit_bin(bin_id):
     b = Bin.query.get(bin_id)
     if request.method == 'POST':
+        b.run_number = request.form['run_number']
         b.puc = request.form['puc']
         b.farm_name = request.form['farm_name']
         b.commodity = request.form['commodity']
@@ -283,7 +289,7 @@ def manage_options():
         return redirect(url_for('manage_options'))
 
     options = {}
-    for field in ['puc', 'farm_name', 'commodity', 'variety', 'bin_class', 'size']:  # include size
+    for field in ['run_number', 'puc', 'farm_name', 'commodity', 'variety', 'bin_class', 'size']:  # include size
         options[field] = DropdownOption.query.filter_by(field=field).all()
     return render_template('manage_options.html', options=options)
 
