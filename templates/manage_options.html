@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Manage Dropdowns</title>
+    <meta charset="UTF-8">
+    <title>Edit Bin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f9fa;
+            padding: 40px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+    </style>
 </head>
 <body>
-  <h1>Manage Dropdown Options</h1>
-  <form method="post">
-    <label>Field:
-      <select name="field">
-        <option value="run_number">Run Number</option>
-        <option value="puc">PUC</option>
-        <option value="farm_name">Farm Name</option>
-        <option value="commodity">Commodity</option>
-        <option value="variety">Variety</option>
-        <option value="bin_class">Class</option>
-        <option value="size">Size</option>
-      </select>
-    </label>
-    <input type="text" name="value" placeholder="New value" required>
-    <button type="submit">Add Option</button>
-  </form>
-
-  {% for field, opts in options.items() %}
-    <h2>{{ field.replace('_', ' ').title() }}</h2>
-    <ul>
-      {% for opt in opts %}
-        <li>{{ opt.value }}
-          <form method="post" action="{{ url_for('delete_option', option_id=opt.id) }}" style="display:inline;">
-            <button type="submit">❌</button>
-          </form>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endfor %}
+    <div class="container">
+        <h2>📝 Edit Bin Entry</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label>PUC</label>
+                <input type="text" name="puc" class="form-control" value="{{ bin.puc }}" required>
+            </div>
+            <div class="form-group">
+                <label>Farm Name</label>
+                <input type="text" name="farm_name" class="form-control" value="{{ bin.farm_name }}" required>
+            </div>
+            <div class="form-group">
+                <label>Commodity</label>
+                <input type="text" name="commodity" class="form-control" value="{{ bin.commodity }}" required>
+            </div>
+            <div class="form-group">
+                <label>Variety</label>
+                <input type="text" name="variety" class="form-control" value="{{ bin.variety }}" required>
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <input type="text" name="bin_class" class="form-control" value="{{ bin.bin_class }}" required>
+            </div>
+            <div class="form-group">
+                <label>Size</label>
+                <input type="text" name="size" class="form-control" value="{{ bin.size }}" required>
+            </div>
+            <div class="form-group">
+                <label>Total Weight (kg)</label>
+                <input type="number" step="0.01" name="total_weight" class="form-control" value="{{ bin.total_weight }}" required>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date" class="form-control" value="{{ bin.date }}">
+            </div>
+            <button type="submit" class="btn btn-success">💾 Save Changes</button>
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary ml-2">↩ Back</a>
+        </form>
+    </div>
 </body>
 </html>
-
