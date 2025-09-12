@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Bin</title>
+    <title>Manage Dropdown Options</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -14,51 +14,76 @@
             margin-bottom: 30px;
             color: #2c3e50;
         }
+        form {
+            margin-bottom: 40px;
+        }
+        .option-table {
+            margin-bottom: 50px;
+        }
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+        }
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #28a745;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>📝 Edit Bin Entry</h2>
+        <h2>Manage Dropdown Options</h2>
+
         <form method="POST">
             <div class="form-group">
-                <label>Run</label>
-                <input type="text" name="run_number" class="form-control" value="{{ bin.run_number }}" required>
-            </div>            
-            <div class="form-group">
-                <label>PUC</label>
-                <input type="text" name="puc" class="form-control" value="{{ bin.puc }}" required>
+                <label for="field">Field:</label>
+                <select class="form-control" name="field" id="field" required>
+                    <option value="run_number">Run</option>
+                    <option value="puc">PUC</option>
+                    <option value="farm_name">Farm Name</option>
+                    <option value="commodity">Commodity</option>
+                    <option value="variety">Variety</option>
+                    <option value="bin_class">Class</option>
+                    <option value="size">Size</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>Farm Name</label>
-                <input type="text" name="farm_name" class="form-control" value="{{ bin.farm_name }}" required>
+                <label for="value">New Option:</label>
+                <input type="text" class="form-control" name="value" id="value" required>
             </div>
-            <div class="form-group">
-                <label>Commodity</label>
-                <input type="text" name="commodity" class="form-control" value="{{ bin.commodity }}" required>
-            </div>
-            <div class="form-group">
-                <label>Variety</label>
-                <input type="text" name="variety" class="form-control" value="{{ bin.variety }}" required>
-            </div>
-            <div class="form-group">
-                <label>Class</label>
-                <input type="text" name="bin_class" class="form-control" value="{{ bin.bin_class }}" required>
-            </div>
-            <div class="form-group">
-                <label>Size</label>
-                <input type="text" name="size" class="form-control" value="{{ bin.size }}" required>
-            </div>
-            <div class="form-group">
-                <label>Total Weight (kg)</label>
-                <input type="number" step="0.01" name="total_weight" class="form-control" value="{{ bin.total_weight }}" required>
-            </div>
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" name="date" class="form-control" value="{{ bin.date }}">
-            </div>
-            <button type="submit" class="btn btn-success">💾 Save Changes</button>
-            <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary ml-2">↩ Back</a>
+            <button type="submit" class="btn btn-success">Add Option</button>
         </form>
+
+        {% for field, options in options.items() %}
+            <div class="option-table">
+                <h4>{{ field|capitalize }} Options</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Value</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for opt in options %}
+                            <tr>
+                                <td>{{ opt.value }}</td>
+                                <td>
+                                    <form action="/delete_option/{{ opt.id }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this option?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        <a href="/" class="back-link">← Back to Dashboard</a>
     </div>
 </body>
 </html>
