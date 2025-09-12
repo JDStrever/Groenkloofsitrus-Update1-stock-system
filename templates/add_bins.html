@@ -45,6 +45,14 @@
                 </select>
             </div>
             <div class="form-group">
+                <label>Run:</label>
+                <select class="form-control" name="run_number" required>
+                    {% for option in dropdowns['run_number'] %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>                
+            </div>
+            <div class="form-group">
                 <label>Farm Name:</label>
                 <select class="form-control" name="farm_name" required>
                     {% for option in dropdowns['farm_name'] %}
