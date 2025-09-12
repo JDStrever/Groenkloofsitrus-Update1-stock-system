@@ -2,29 +2,156 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login</title>
+    <title>Groenkloof Sitrus Voorraad</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css">
     <style>
-        body { font-family: Arial; padding: 50px; background: #f1f2f6; }
-        .login-box {
-            width: 300px; margin: auto; background: white; padding: 30px; border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('{{ url_for("static", filename="images/background.jpg") }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #fdfdfd; /* fallback */
+            padding: 30px;
         }
-        input { width: 100%; padding: 10px; margin: 10px 0; }
-        button { padding: 10px 20px; background: #00b894; color: white; border: none; border-radius: 4px; }
-        .error { color: red; text-align: center; }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .btn-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        a.button {
+            display: inline-block;
+            margin: 10px 10px;
+            padding: 10px 20px;
+            background-color: #74b9ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        a.button:hover {
+            background-color: #0984e3;
+        }
+        table.dataTable tfoot {
+            background-color: #ffeaa7;
+            font-weight: bold;
+        }
+        /* Admin button top-left */
+        .admin-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #dfe6e9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #2d3436;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>🔒 Admin Login</h2>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
+
+    <a class="admin-link" href="/admin_login">🔒 Admin</a>
+
+    <h1>🍋 Groenkloof Sitrus Voorraad 🍊</h1>
+
+ <div class="btn-group">
+        <a class="button" href="/add_bins">➕ Add Bin Entries</a>
+        <a class="button" href="/mark_tipped">✅ Mark Bins as Tipped</a>
+        <a class="button" href="/season_bins_tipped">📦 Season Bins Tipped</a>
     </div>
+    
+    <table id="stockTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>PUC</th>
+                <th>Commodity</th>
+                <th>Variety</th>
+                <th>Class</th>
+                <th>Farm</th>
+                <th>Total Bins</th>
+                <th>Bins on Stock</th>
+                <th>Bins Tipped</th>
+                <th>Total Weight (kg)</th>
+                <th>Tipped Weight (kg)</th>
+                <th>Oldest Bin (days)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for summary in stock_summary %}
+            <tr>
+                <td>{{ summary.puc }}</td>
+                <td>{{ summary.commodity }}</td>
+                <td>{{ summary.variety }}</td>
+                <td>{{ summary.bin_class }}</td>
+                <td>{{ summary.farm_name }}</td>
+                <td>{{ summary.total_bins }}</td>
+                <td>{{ summary.bins_on_stock }}</td>
+                <td>{{ summary.bins_tipped }}</td>
+                <td>{{ "%.2f"|format(summary.total_weight) }}</td>
+                <td>{{ "%.2f"|format(summary.tipped_weight) }}</td>
+                <td>{{ summary.oldest_bin_age }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5" style="text-align:right">Total:</th>
+                <th></th> <!-- Total Bins -->
+                <th></th> <!-- Bins on Stock -->
+                <th></th> <!-- Bins Tipped -->
+                <th></th> <!-- Total Weight -->
+                <th></th> <!-- Tipped Weight -->
+                <th></th> <!-- Oldest Bin -->
+            </tr>
+        </tfoot>
+    </table>
+
+<a class="button" href="/export_csv">📤 Export All Bins</a>
+<a class="button" href="/export_csv_on_stock">📦 Export On-Stock Bins</a>
+<a class="button" href="/export_csv_tipped">✅ Export Tipped Bins</a>
+<a class="button" href="/export_csv_season">🕒 Export Season Bins</a>
+    
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const table = $('#stockTable').DataTable({
+                fixedHeader: true,
+                footerCallback: function ( row, data, start, end, display ) {
+                    var api = this.api();
+
+                    const intVal = function (i) {
+                        return typeof i === 'string'
+                            ? parseFloat(i.replace(/[,]/g, '')) || 0
+                            : typeof i === 'number'
+                            ? i : 0;
+                    };
+
+                    // Columns to sum
+                    [5, 6, 7, 8, 9].forEach(function(colIdx) {
+                        let total = api
+                            .column(colIdx, { search: 'applied' })
+                            .data()
+                            .reduce((a, b) => intVal(a) + intVal(b), 0);
+                        $(api.column(colIdx).footer()).html(
+                            total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})
+                        );
+                    });
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
