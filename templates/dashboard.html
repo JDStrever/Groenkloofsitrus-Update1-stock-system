@@ -71,32 +71,26 @@
     <table id="stockTable" class="display" style="width:100%">
         <thead>
             <tr>
+                <th>Run number</th>
                 <th>PUC</th>
                 <th>Commodity</th>
                 <th>Variety</th>
                 <th>Class</th>
                 <th>Farm</th>
-                <th>Total Bins</th>
                 <th>Bins on Stock</th>
-                <th>Bins Tipped</th>
-                <th>Total Weight (kg)</th>
-                <th>Tipped Weight (kg)</th>
                 <th>Oldest Bin (days)</th>
             </tr>
         </thead>
         <tbody>
             {% for summary in stock_summary %}
             <tr>
+                <td>{{ summary.run_number }}</td>
                 <td>{{ summary.puc }}</td>
                 <td>{{ summary.commodity }}</td>
                 <td>{{ summary.variety }}</td>
                 <td>{{ summary.bin_class }}</td>
                 <td>{{ summary.farm_name }}</td>
-                <td>{{ summary.total_bins }}</td>
                 <td>{{ summary.bins_on_stock }}</td>
-                <td>{{ summary.bins_tipped }}</td>
-                <td>{{ "%.2f"|format(summary.total_weight) }}</td>
-                <td>{{ "%.2f"|format(summary.tipped_weight) }}</td>
                 <td>{{ summary.oldest_bin_age }}</td>
             </tr>
             {% endfor %}
@@ -107,8 +101,6 @@
                 <th></th> <!-- Total Bins -->
                 <th></th> <!-- Bins on Stock -->
                 <th></th> <!-- Bins Tipped -->
-                <th></th> <!-- Total Weight -->
-                <th></th> <!-- Tipped Weight -->
                 <th></th> <!-- Oldest Bin -->
             </tr>
         </tfoot>
