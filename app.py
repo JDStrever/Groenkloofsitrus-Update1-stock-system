@@ -185,7 +185,7 @@ def season_bins_tipped():
     summary = []
     for (run_number, puc, farm, com, var, cls), group in grouped.items():
         summary.append({
-            'run_number': run,
+            'run_number': run_number,
             'puc': puc,
             'farm_name': farm,
             'commodity': com,
