@@ -19,28 +19,38 @@
   </style>
   <script>
     function filterTable(colIndex, value) {
-      let rows = document.querySelectorAll("#seasonTable tbody tr");
+      const rows = document.querySelectorAll("#seasonTable tbody tr");
       rows.forEach(row => {
-        row.style.display = value === "" || row.cells[colIndex].innerText === value ? "" : "none";
+        const cell = row.cells[colIndex];
+        if (cell) {
+          row.style.display = value === "" || cell.innerText === value ? "" : "none";
+        }
       });
     }
 
     function populateFilters() {
       const table = document.getElementById("seasonTable");
-      const headers = table.rows[0].cells.length;
-      for (let i = 0; i < headers; i++) {
-        let select = document.createElement("select");
+      const headerRow = table.querySelector("thead tr");
+      const columnCount = headerRow.children.length;
+
+      for (let i = 0; i < columnCount; i++) {
+        const select = document.createElement("select");
         select.innerHTML = "<option value=''>All</option>";
-        let values = new Set();
-        document.querySelectorAll(`#seasonTable tbody tr td:nth-child(${i + 1})`).forEach(td => {
-          values.add(td.innerText);
+
+        const values = new Set();
+        document.querySelectorAll(`#seasonTable tbody td:nth-child(${i + 1})`).forEach(td => {
+          values.add(td.textContent.trim());
         });
-        values = Array.from(values).sort();
-        values.forEach(v => {
-          select.innerHTML += `<option value="${v}">${v}</option>`;
+
+        Array.from(values).sort().forEach(v => {
+          const option = document.createElement("option");
+          option.value = v;
+          option.textContent = v;
+          select.appendChild(option);
         });
-        select.onchange = () => filterTable(i, select.value);
-        table.rows[0].cells[i].appendChild(select);
+
+        select.addEventListener("change", () => filterTable(i, select.value));
+        headerRow.children[i].appendChild(select);
       }
     }
 
@@ -79,4 +89,3 @@
   </table>
 </body>
 </html>
-
